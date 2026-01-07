@@ -28,7 +28,7 @@ void loop() {
   static bool outputActive = false;
   static unsigned long outputStartTime = 0;
   static unsigned long lastDebugTime = 0;
-  const unsigned long OUTPUT_DURATION = 2000; // 2 seconds in milliseconds
+  const unsigned long OUTPUT_DURATION = 10000; // 10 seconds in milliseconds
 
   // Check if output is active and should be turned off
   if (outputActive) {
