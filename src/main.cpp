@@ -28,10 +28,15 @@ void loop() {
   static bool outputActive = false;
   static unsigned long outputStartTime = 0;
   static unsigned long lastDebugTime = 0;
-  const unsigned long OUTPUT_DURATION = 10000; // 10 seconds in milliseconds
+  const unsigned long OUTPUT_DURATION = 2000; // 2 seconds in milliseconds
 
   // Check if output is active and should be turned off
   if (outputActive) {
+    // Clear any incoming UART data during output phase to prevent interference
+    while (Serial1.available() > 0) {
+      Serial1.read(); // Discard data
+    }
+    
     unsigned long elapsed = millis() - outputStartTime;
     if (elapsed >= OUTPUT_DURATION) {
       digitalWrite(OUTPUT_PIN, LOW);
@@ -39,6 +44,9 @@ void loop() {
       consecutiveFF = 0; // Reset counter for next trigger
       Serial.printf("[OUTPUT] GPIO12 -> LOW (elapsed=%lums, ready for next trigger)\n\n", elapsed);
     } else {
+      // Keep pin HIGH during the entire duration
+      digitalWrite(OUTPUT_PIN, HIGH);
+      
       // Periodic status update while HIGH
       if (millis() - lastDebugTime >= 500) {
         Serial.printf("[STATUS] GPIO12=HIGH, elapsed=%lums/%lums\n", elapsed, OUTPUT_DURATION);
@@ -61,8 +69,9 @@ void loop() {
         digitalWrite(OUTPUT_PIN, HIGH);
         outputActive = true;
         outputStartTime = millis();
+        lastDebugTime = millis();
         consecutiveFF = 0; // Reset to avoid retriggering immediately
-        Serial.println("[TRIGGER] 5x 0xFF detected! GPIO12 -> HIGH (2s)\n");
+        Serial.printf("[TRIGGER] 5x 0xFF detected! GPIO12 -> HIGH for %lums\n\n", OUTPUT_DURATION);
       }
     } else {
       if (consecutiveFF > 0) {
