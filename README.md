@@ -1,7 +1,7 @@
 # FlareLink - 远程点火装置
 
 基于ESP32-C3的无线点火控制系统，通过UART触发信号控制高压发生器的开关。
-
+![产品图](./docs/flarelink_diagram.HEIC)
 ## 🎯 系统概述
 
 FlareLink是一个双ESP32-C3系统：
